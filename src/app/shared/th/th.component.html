@@ -1,0 +1,11 @@
+<div *ngIf="coloumnModel.dropDown " ngbDropdown>
+    <a id="coloumnModel.coloumnName" ngbDropdownToggle>
+        {{coloumnModel.coloumnName}}
+    </a>
+    <div *ngIf="coloumnModel.dropDown" ngbDropdownMenu aria-labelledby="coloumnModel.coloumnName">
+        <a *ngFor="let val of coloumnModel.dropValues" ngbDropdownItem>{{val}}</a>
+    </div>
+</div>
+<div *ngIf="!coloumnModel.dropDown">
+    {{coloumnModel.coloumnName}}
+</div>
