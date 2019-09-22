@@ -1,0 +1,24 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col" *ngFor="let coloumName of coloumnArray">
+                <app-th [coloumnModel]="coloumName"></app-th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr (click)="onTaskSelect(todoItem)" *ngFor="let todoItem of todoItems">
+            <td>{{todoItem.Description}}</td>
+            <td>{{todoItem.CreationDate | date : 'shortDate'}}</td>
+            <td [ngSwitch]="todoItem.Status">
+                <span ngbTooltip="Active" [openDelay]="openDelay" [closeDelay]="closeDelay" *ngSwitchCase="'Active'" [style.background-color]='"#007bff"' class="dot"></span>
+                <span ngbTooltip="Deleted" [openDelay]="openDelay" [closeDelay]="closeDelay" *ngSwitchCase="'Deleted'" [style.background-color]='"red"' class="dot"></span>
+                <span ngbTooltip="Not Started" [openDelay]="openDelay" [closeDelay]="closeDelay" *ngSwitchCase="'NotStarted'" [style.background-color]='"#D3D3D3"' class="dot"></span>
+                <span ngbTooltip="Completed" [openDelay]="openDelay" [closeDelay]="closeDelay" *ngSwitchCase="'Completed'" [style.background-color]='"green"' class="dot"></span>
+            </td>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </tbody>
+</table>
