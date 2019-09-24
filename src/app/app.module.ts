@@ -7,7 +7,6 @@ import { TodoItemComponent } from './todo-item/todo-item.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
 import { FabComponent } from './shared/fab/fab.component';
 import { ThComponent } from './shared/th/th.component';
-
 @NgModule({
   declarations: [
     AppComponent,

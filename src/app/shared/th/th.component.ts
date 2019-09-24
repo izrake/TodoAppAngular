@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ColoumnModel } from '../coloumn-model';
+import { Component, OnInit, Input, Output,EventEmitter } from '@angular/core';
+import { ColoumnHeaderModel } from '../coloumn-model';
 
 @Component({
   selector: 'app-th',
@@ -7,12 +7,19 @@ import { ColoumnModel } from '../coloumn-model';
   styleUrls: ['./th.component.css']
 })
 export class ThComponent implements OnInit {
-@Input() coloumnModel:ColoumnModel
+@Input() ColoumnHeaderModel:ColoumnHeaderModel
+@Input() thClassList:string[];
+@Output() onDropDown:EventEmitter<string>;
   constructor() { 
+    this.onDropDown= new EventEmitter();
   }
 
   ngOnInit() {
-    console.log(this.coloumnModel);
+    console.log(this.ColoumnHeaderModel);
+  }
+
+  onDropDownValueSelected(event:string){
+    this.onDropDown.emit(event);
   }
 
 }

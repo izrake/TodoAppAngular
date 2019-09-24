@@ -1,4 +1,4 @@
-export class ColoumnModel {
+export class ColoumnHeaderModel {
 
 
     // Coloumn Name should be used in proper order
@@ -9,4 +9,23 @@ export class ColoumnModel {
     ) {
     }
 
+}
+
+export class ColoumnBodyModel<T>{
+
+    /**
+     Here T should be iterable value of some type
+    */
+constructor(public iterable:T) {
+    
+}
+
+}
+
+export class ColoumnModel<T>{
+    /**
+     Expose Coloumn Model to the outer world
+     */
+    constructor(public coloumnBodyModel:ColoumnBodyModel<T>,public coloumnHeaderModel:ColoumnHeaderModel) {        
+    }
 }

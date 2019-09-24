@@ -11,5 +11,6 @@ export class TodoModel {
     Active = 'Active',
     Completed = 'Completed',
     Deleted = 'Deleted',
-    NotStarted = "NotStarted"
+    NotStarted = 'NotStarted',
+    Reset='Reset'
   }

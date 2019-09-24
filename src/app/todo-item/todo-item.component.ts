@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { TodoModel, Status } from '../shared/TodoModel';
-import { ColoumnModel } from '../shared/coloumn-model';
+import { ColoumnHeaderModel } from '../shared/coloumn-model';
 
 @Component({
   selector: 'app-todo-item',
@@ -9,35 +9,34 @@ import { ColoumnModel } from '../shared/coloumn-model';
 })
 export class TodoItemComponent implements OnInit {
   @Input() todoItems: TodoModel[];
-  @Input() coloumnArray:ColoumnModel[];
+  @Input() coloumnArray: ColoumnHeaderModel[];
   @Output() onProductSelected: EventEmitter<TodoModel>;
   statusColor: string;
   openDelay: number = 100;
   closeDelay: number = 200;
   ascendingOrder: boolean = false;
-  constructor() { 
-    this.coloumnArray= this.getColoumnArray();
-    this.onProductSelected= new EventEmitter();
+  localCopyTodoItems: TodoModel[];
+  constructor() {
+    this.coloumnArray = this.getColoumnArray();
+    this.onProductSelected = new EventEmitter();
   }
 
   ngOnInit() {
+    this.localCopyTodoItems = Object.assign([], this.todoItems);
   }
 
 
-  sortByDate(): boolean {
-    if (this.ascendingOrder) {
-      this.todoItems.sort((a: TodoModel, b: TodoModel) => {
-        return this.getTime(a.CreationDate) - this.getTime(b.CreationDate);
-      });
-      this.ascendingOrder = false;
-    }
-    else {
-      this.todoItems.sort((a: TodoModel, b: TodoModel) => {
-        return this.getTime(b.CreationDate) - this.getTime(a.CreationDate);
-      });
-      this.ascendingOrder = true;
-    }
+  private sortByAscendingDate(): boolean {
+    this.localCopyTodoItems.sort((a: TodoModel, b: TodoModel) => {
+      return this.getTime(a.CreationDate) - this.getTime(b.CreationDate);
+    });
+    return false;
+  }
 
+  private sortByDescendingOrder(): boolean {
+    this.localCopyTodoItems.sort((a: TodoModel, b: TodoModel) => {
+      return this.getTime(b.CreationDate) - this.getTime(a.CreationDate);
+    });
     return false;
   }
 
@@ -51,16 +50,48 @@ export class TodoItemComponent implements OnInit {
     return date != null ? date.getTime() : 0;
   }
 
-  private getColoumnArray():Array<ColoumnModel>{
-    let coloumnArray= new Array<ColoumnModel>();
-    coloumnArray.push(new ColoumnModel("Description",1),
-    new ColoumnModel("CreationDate",2),
-    new ColoumnModel("Status",3,true,[Status.NotStarted,
-    Status.Completed,Status.Deleted,Status.Active
-    ]),
-    new ColoumnModel("Action",4)
+  private getColoumnArray(): Array<ColoumnHeaderModel> {
+    let coloumnArray = new Array<ColoumnHeaderModel>();
+    coloumnArray.push(new ColoumnHeaderModel("Description", 1),
+      new ColoumnHeaderModel("CreationDate", 2, true, ["Ascending", "Descending"]),
+      new ColoumnHeaderModel("Status", 3, true, [Status.Reset, Status.NotStarted,
+      Status.Completed, Status.Deleted, Status.Active
+      ]),
+      new ColoumnHeaderModel("Action", 4)
     );
     return coloumnArray;
   }
+
+  OnDropDownSelected(value: string): boolean {
+
+    if (value == SortBy.Ascending ) {
+      this.sortByAscendingDate();
+      return;
+    }
+    if (value == SortBy.Descending ) {
+      this.sortByDescendingOrder();
+      return;
+    }
+    if (value !== Status.Reset) {
+      this.localCopyTodoItems = Object.assign([], this.todoItems);
+      this.localCopyTodoItems = this.localCopyTodoItems.filter(function (item) {
+        if (item.Status == value) {
+          return item;
+        }
+      });
+    }
+    else {
+      this.localCopyTodoItems = this.todoItems;
+    }
+
+    return false;
+  }
+
+
+}
+
+export enum SortBy {
+  Ascending = "Ascending",
+  Descending = "Descending"
 }
 
