@@ -7,6 +7,7 @@ import { TodoItemComponent } from './todo-item/todo-item.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
 import { FabComponent } from './shared/fab/fab.component';
 import { ThComponent } from './shared/th/th.component';
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -17,6 +18,7 @@ import { ThComponent } from './shared/th/th.component';
     ThComponent
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     NgbModule
   ],

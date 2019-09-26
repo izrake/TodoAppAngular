@@ -1,13 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, OnChanges, DoCheck, IterableDiffers } from '@angular/core';
 import { TodoModel, Status } from '../shared/TodoModel';
 import { ColoumnHeaderModel } from '../shared/coloumn-model';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-todo-item',
   templateUrl: './todo-item.component.html',
   styleUrls: ['./todo-item.component.css']
 })
-export class TodoItemComponent implements OnInit {
+export class TodoItemComponent implements OnInit, DoCheck {
+
   @Input() todoItems: TodoModel[];
   @Input() coloumnArray: ColoumnHeaderModel[];
   @Output() onProductSelected: EventEmitter<TodoModel>;
@@ -15,16 +17,24 @@ export class TodoItemComponent implements OnInit {
   openDelay: number = 100;
   closeDelay: number = 200;
   ascendingOrder: boolean = false;
+  iterableDiffer: any;
   localCopyTodoItems: TodoModel[];
-  constructor() {
+  closeResult: string;
+  constructor(private _iterableDiffers: IterableDiffers,private modalService: NgbModal) {
+    this.iterableDiffer = this._iterableDiffers.find([]).create(null);
     this.coloumnArray = this.getColoumnArray();
     this.onProductSelected = new EventEmitter();
   }
-
   ngOnInit() {
     this.localCopyTodoItems = Object.assign([], this.todoItems);
   }
-
+//implement this to detect any changes in the passed array from the parent component
+  ngDoCheck(): void {
+    let changes = this.iterableDiffer.diff(this.todoItems);
+    if (changes) {
+      this.localCopyTodoItems = this.todoItems;
+    }
+  }
 
   private sortByAscendingDate(): boolean {
     this.localCopyTodoItems.sort((a: TodoModel, b: TodoModel) => {
@@ -41,7 +51,6 @@ export class TodoItemComponent implements OnInit {
   }
 
   onTaskSelect(selectedItem: TodoModel): boolean {
-    console.log(selectedItem);
     this.onProductSelected.emit(selectedItem);
     return false;
   }
@@ -64,11 +73,11 @@ export class TodoItemComponent implements OnInit {
 
   OnDropDownSelected(value: string): boolean {
 
-    if (value == SortBy.Ascending ) {
+    if (value == SortBy.Ascending) {
       this.sortByAscendingDate();
       return;
     }
-    if (value == SortBy.Descending ) {
+    if (value == SortBy.Descending) {
       this.sortByDescendingOrder();
       return;
     }
@@ -83,11 +92,26 @@ export class TodoItemComponent implements OnInit {
     else {
       this.localCopyTodoItems = this.todoItems;
     }
-
     return false;
   }
 
+  open(content) {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result.description}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
 
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return  `with: ${reason}`;
+    }
+  }
 }
 
 export enum SortBy {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TodoModel, Status } from '../shared/TodoModel';
+import { TodoDataService } from '../todo-data.service';
 
 @Component({
   selector: 'app-todo-list',
@@ -8,34 +9,20 @@ import { TodoModel, Status } from '../shared/TodoModel';
 })
 export class TodoListComponent implements OnInit {
   TodoModel: TodoModel[];
-  constructor() { this.loadToDoItem();}
+  id:number=5;
+  constructor(private services:TodoDataService) { }
 
   ngOnInit() {
-    
+    this.services.getTodoData().subscribe(todoList=> this.TodoModel=todoList)
   }
-
-  loadToDoItem(): void {
-    let date = new Date();
-    let tomorrow=new Date();
-    tomorrow.setDate(date.getDate()+1);
-    let dayAfterTomorrow=new Date();
-    dayAfterTomorrow.setDate(date.getDate()+2)
-    this.TodoModel = [new TodoModel(1, 'If you are looking for angular app', date
-      , Status.Active),
-      new TodoModel(2, 'Fork the repo on github just type github/izrake and search for TodoApplication', date
-      , Status.Completed),
-      new TodoModel(3, 'I hope you will find the code little intersting', dayAfterTomorrow
-      , Status.Deleted),
-      new TodoModel(4, 'Thank you for waiting so long', tomorrow
-      , Status.NotStarted),
-      new TodoModel(5, 'I will be adding many features of angular dont forget to follow', date
-      , Status.NotStarted)
-    ];
-    console.log(this.TodoModel);
-  }
-
   onproductselected(todoItem:TodoModel):void{
     //perform routing here after reveiving the todoItem
     console.log(todoItem)
+  }
+
+  OnModalSavedClicked(obj){
+    console.log(obj.description);
+    let date = new Date();
+    this.services.saveToDoData(new TodoModel(this.id++,obj.description,date,Status.NotStarted));
   }
 }
